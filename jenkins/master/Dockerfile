@@ -2,7 +2,13 @@
 FROM jenkins/jenkins:lts
  
 # Installing the plugins we need using the in-built install-plugins.sh script
-RUN /usr/local/bin/install-plugins.sh git matrix-auth workflow-aggregator docker-workflow build-monitor-plugin credentials-binding
+RUN /usr/local/bin/install-plugins.sh git matrix-auth workflow-aggregator docker docker-workflow build-monitor-plugin credentials-binding
+
+# Add jenkins to docker group to enable jenkins user to connect to docker socket
+# switch to root, let the entrypoint drop back to jenkins
+USER root
+RUN groupadd -r docker \
+ && usermod -aG docker jenkins
  
 # Setting up environment variables for Jenkins admin user
 ENV JENKINS_USER admin
